@@ -5,6 +5,8 @@ import numpy
 from scipy import linalg
 import matplotlib.pyplot as plt
 
+# Franciane: coloquei esse comentario so para editar o codigo e enviar uma segunda versao para o repositorio
+
 
 #Imprime uma lista em formato de matriz
 def imprimeMatriz(matriz):
