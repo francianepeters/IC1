@@ -3,6 +3,8 @@
 #Teste do meld
 
 
+
+
 import numpy 
 from scipy import linalg
 import matplotlib.pyplot as plt
