@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # *-* coding: utf-8 *-*
-#comente teste
 import numpy 
 from scipy import linalg
 import matplotlib.pyplot as plt
