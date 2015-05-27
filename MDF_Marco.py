@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # *-* coding: utf-8 *-*
-#https://www.wolframalpha.com/input/?i=u%3D%28%28%28x^4%29%2F12%29-%28%28x^3%29%2F6%29%29%2B%28%281%2F12%29%29x#
+#https://www.wolframalpha.com/input/?i=u%3D%28%28%28x^4%29%2F12%29-%28%28x^3%29%2F6%29%29%2B%28%281%2F12%29%29x
+#http://interactivepython.org/NWUbZ/LMdYZ/LpOMZ/courselib/static/pythonds/Graphs/graphintro.html
 
 import numpy 
 from scipy import linalg
@@ -151,6 +152,11 @@ def exatapoisson1d(npontos,tc1,vc1,tc2,vc2):
 
     return exata
 
+def erroabsoluto(vetorMDF,solexata,npontos):
+    erro=[0]*npontos
+    for i in range (npontos):
+        erro[i]=vetorMDF[i]-solexata[i]
+    return erro
 
 
 k=input('Digite "1" para Laplace; "2" para Poisson (f(x)=x2-x):')
@@ -201,11 +207,19 @@ elif k==2:
 imprimeVetor(solexata)
 print 'Soluçao Exata'
 
+erroabsoluto = erroabsoluto(vetorMDF,solexata,npontos)
 
-plt.plot(abscissas,solnumerica,'bo')   # estou a fazer o gráfico dos dois vectores.
+imprimeVetor(erroabsoluto)
+print 'Erro absoluto'
 
+plt.plot(abscissas,solnumerica,'bo-')   #gráfico soluçao numerica
     
-plt.plot(abscissas,solexata,'rx')   # estou a fazer o gráfico dos dois vectores.
+plt.plot(abscissas,solexata,'xr-')   #gráfico solucao exata
+
+#Identificaçao dos eixos
+axes = plt.gca()
+axes.set_xlabel('x')
+axes.set_ylabel('u(x)')
 
 
-plt.show()    # Esta linha de código serve para mostrar o gráfico total.
+plt.show()    #apresenta os gráficos plotados
