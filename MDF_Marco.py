@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 # *-* coding: utf-8 *-*
-#Teste do meld
-
-
-
+#https://www.wolframalpha.com/input/?i=u%3D%28%28%28x^4%29%2F12%29-%28%28x^3%29%2F6%29%29%2B%28%281%2F12%29%29x#
 
 import numpy 
 from scipy import linalg
 import matplotlib.pyplot as plt
 
-# Franciane: coloquei esse comentario so para editar o codigo e enviar uma segunda versao para o repositorio
 
 
 #Imprime uma lista em formato de matriz
@@ -50,7 +46,7 @@ def verificanpts(npontos):
 
 #Montar a matriz de coeficientes da equação da laplace
 #Via MDF
-def taylorcoef1d(npontos,tc1,vc1,tc2,vc2):  
+def MDFcoef1d(npontos,tc1,vc1,tc2,vc2):  
     h=1.0/(npontos-1) #h-dimensao dos trechos particionados
 
     matriz=[0]*npontos #linhas da matriz->cria uma lista com (npontos) elementos
@@ -79,9 +75,11 @@ def taylorcoef1d(npontos,tc1,vc1,tc2,vc2):
 
     return matriz
 
-#Monta o vetor C da equacao matricial (taylorcoef1d)X = C
-#Sendo X o vetor com os valores de x onde se deseja definir u(x)
-def taylorvetor(npontos,tc1,vc1,tc2,vc2):
+#Monta o vetor C da equacao matricial (MDFcoef1d)X = C
+#Sendo X o vetor com os valores de x onde se deseja definir u(x):
+
+#Problema de Laplace
+def vetorlaplace(npontos,tc1,vc1,tc2,vc2):
     vetor=[0]*npontos
 
     vetor[0]=vc1
@@ -89,9 +87,24 @@ def taylorvetor(npontos,tc1,vc1,tc2,vc2):
 
     return vetor
 
+#Problema de Poisson para f(x) = x² - x
+def vetorpoisson(npontos,tc1,vc1,tc2,vc2):
+    vetor=[0]*npontos
+    h=1.0/(npontos-1)
+    vetor[0]=vc1
+    
+    for i in range (1,npontos-2):
+        x=i*h
+        ddu=(x**2)-x
+        vetor[i]=ddu
+        
+    vetor[npontos-1]=vc2
+
+    return vetor
+
 #Montar o vetor resposta U(x) para os pontos x desejados
 #Laplace solucionado via analitica
-def exata1d(npontos,tc1,vc1,tc2,vc2):  
+def exatalaplace1d(npontos,tc1,vc1,tc2,vc2):  
     h=1.0/(npontos-1)
     exata=[0]*npontos
        
@@ -112,10 +125,35 @@ def exata1d(npontos,tc1,vc1,tc2,vc2):
 
     return exata
 
+#Montar o vetor resposta U(x) para os pontos x desejados
+#Poisson solucionado via analitica para f(x) = x² - x
+def exatapoisson1d(npontos,tc1,vc1,tc2,vc2):  
+    h=1.0/(npontos-1)
+    exata=[0]*npontos
+       
+    if tc1==0 and tc2==0:
+        for i in range (npontos):
+            x=i*h
+            u=(((x**4)/12)-((x**3)/6))+((1/12)+vc2-vc1)*x + vc1
+            exata[i]=u
+            
+    if tc1==0 and tc2==1:
+        for i in range (npontos):
+            x=i*h
+            u=(((x**4)/12)-((x**3)/6))+(vc2 + (1/6))*x + vc1
+            exata[i]=u
+
+    if tc1==1 and tc2==0:
+        for i in range (npontos):
+            x=i*h
+            u=(((x**4)/12)-((x**3)/6))+(vc1)*x + ((1/12)+vc2-vc1)
+            exata[i]=u
+
+    return exata
 
 
 
-
+k=input('Digite "1" para Laplace; "2" para Poisson (f(x)=x2-x):')
     
 npontos=input('número de pontos para discretizacao:')
 
@@ -129,17 +167,21 @@ vc2=input('valor de condicao de contorno da direita:')
 
 verificacc(tc1,tc2)
 
-matrizcoeftaylor=taylorcoef1d(npontos,tc1,vc1,tc2,vc2)
+matrizcoef=MDFcoef1d(npontos,tc1,vc1,tc2,vc2)
 
-imprimeMatriz(matrizcoeftaylor)
-print 'Matriz de Coeficientes Taylor'
+imprimeMatriz(matrizcoef)
+print 'Matriz de Coeficientes MDF'
 
-vetortaylor=taylorvetor(npontos,tc1,vc1,tc2,vc2)
+if k==1:
+    vetorMDF=vetorlaplace(npontos,tc1,vc1,tc2,vc2)
 
-imprimeVetor(vetortaylor)
-print 'Vetor Taylor'
+elif k==2:
+    vetorMDF=vetorpoisson(npontos,tc1,vc1,tc2,vc2)
 
-solnumerica=linalg.solve(matrizcoeftaylor,vetortaylor)
+imprimeVetor(vetorMDF)
+print 'Vetor MDF'
+
+solnumerica=linalg.solve(matrizcoef,vetorMDF)
 
 imprimeVetor(solnumerica)
 print 'Soluçao Numerica'
@@ -149,7 +191,12 @@ abscissas=numpy.linspace(0,1,npontos)
 imprimeVetor(abscissas)
 print 'Pontos discretizados'
 
-solexata=exata1d(npontos,tc1,vc1,tc2,vc2)
+if k==1:
+    solexata=exatalaplace1d(npontos,tc1,vc1,tc2,vc2)
+
+elif k==2:
+    solexata=exatapoisson1d(npontos,tc1,vc1,tc2,vc2)
+
 
 imprimeVetor(solexata)
 print 'Soluçao Exata'
