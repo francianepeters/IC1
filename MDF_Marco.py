@@ -134,19 +134,19 @@ def exatapoisson1d(npontos,tc1,vc1,tc2,vc2):
     if tc1==0 and tc2==0:
         for i in range (npontos):
             x=i*h
-            u=(((x**4)/12)-((x**3)/6))+((1/12)+vc2-vc1)*x + vc1
+            u=(((x**4)/12.0)-((x**3)/6.0))+((1.0/12.0)+vc2-vc1)*x + vc1
             exata[i]=u
             
     if tc1==0 and tc2==1:
         for i in range (npontos):
             x=i*h
-            u=(((x**4)/12)-((x**3)/6))+(vc2 + (1/6))*x + vc1
+            u=(((x**4)/12.0)-((x**3)/6.0))+(vc2 + (1/6.0))*x + vc1
             exata[i]=u
 
     if tc1==1 and tc2==0:
         for i in range (npontos):
             x=i*h
-            u=(((x**4)/12)-((x**3)/6))+(vc1)*x + ((1/12)+vc2-vc1)
+            u=(((x**4)/12.0)-((x**3)/6.0))+(vc1)*x + ((1/12.0)+vc2-vc1)
             exata[i]=u
 
     return exata
