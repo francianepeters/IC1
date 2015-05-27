@@ -76,16 +76,41 @@ def exatalaplace1d(npontos,tc1,vc1,tc2,vc2):
 
 
 #Montar um vetor independente do sistema
-def montavetor(npontos,tc1,vc1,tc2,vc2):
+def montavetor(npontos,tc1,vc1,tc2,vc2,problema):
     vetor=[0]*npontos
 
     vetor[0]=vc1
     vetor[npontos-1]=vc2
 
+    h=1.0/(npontos-1)
+
+    print problema
+    print h
+
+
+    if problema==1:
+        for i in range (1,npontos-1):
+            x=i*h
+            vetor[i]=x
+        
+
     return vetor
 
+def fonte(x):
 
-    
+    fonte=x**5*(x-1)
+
+#    fonte=x*(x-1)*(x-0.5)*(x-0.25)
+
+    return fonte
+
+
+problema=input('digite 0 para laplace e 1 para poisson:')
+
+#if problema!=0 and problema!=1:
+#    'problema não definido'
+#    break
+
 npontos=input('número de pontos para discretizacao:')
 
 #if(npontos<=1)then
@@ -103,7 +128,7 @@ matriz=laplace1d(npontos,tc1,vc1,tc2,vc2)
 
 imprimiMatriz(matriz)
 
-vetor=montavetor(npontos,tc1,vc1,tc2,vc2)
+vetor=montavetor(npontos,tc1,vc1,tc2,vc2,problema)
 
 imprimiVetor(vetor)
 
