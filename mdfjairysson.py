@@ -87,9 +87,9 @@ def montavetor(npontos,tc1,vc1,tc2,vc2,problema):
     print problema
     print h
 
-
+#Mudança: antes o "for" era (1,npontos-1)
     if problema==1:
-        for i in range (1,npontos-1):
+        for i in range (1,npontos-2):
             x=i*h
             vetor[i]=x
         
@@ -145,10 +145,10 @@ exata=exatalaplace1d(npontos,tc1,vc1,tc2,vc2)
 imprimiVetor(exata)
 
 
-plt.plot(x,solucao,'bo')   # estou a fazer o gráfico dos dois vectores.
+plt.plot(x,solucao,'bo-')   # estou a fazer o gráfico dos dois vectores.
 
     
-plt.plot(x,exata,'rx')   # estou a fazer o gráfico dos dois vectores.
+plt.plot(x,exata,'rx-')   # estou a fazer o gráfico dos dois vectores.
 
 
 plt.show()    # Esta linha de código serve para mostrar o gráfico total.
