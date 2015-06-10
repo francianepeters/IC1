@@ -41,11 +41,11 @@ def verificacc(tc1,tc2):
 #Deve ser um valor inteiro >= 2
 def verificanpts(npontos):
     if isinstance(npontos,int)== False:
-        print 'Erro no numero de pontos'
+        print 'Erro no numero de pontos (nao inteiro)'
     if npontos < 2:
-        print 'Erro no numero de pontos.'
+        print 'Erro no numero de pontos (<2)'
 
-#Montar a matriz de coeficientes da equação da laplace
+#Montar a matriz de coeficientes da equação de laplace
 #Via MDF
 def MDFcoef1d(npontos,tc1,vc1,tc2,vc2):  
     h=1.0/(npontos-1) #h-dimensao dos trechos particionados
@@ -96,8 +96,8 @@ def vetorpoisson(npontos,tc1,vc1,tc2,vc2):
     
     for i in range (1,npontos-2):
         x=i*h
-        ddu=(x**2)-x
-        vetor[i]=ddu
+        funcao=(x**2)-x
+        vetor[i]=funcao
         
     vetor[npontos-1]=vc2
 
@@ -158,8 +158,11 @@ def erroabsoluto(vetorMDF,solexata,npontos):
         erro[i]=vetorMDF[i]-solexata[i]
     return erro
 
+##############################################################################
+#Estrutura principal do programa:
+##############################################################################
 
-k=input('Digite "1" para Laplace; "2" para Poisson (f(x)=x2-x):')
+k=input('Digite "1" para resolver Laplace; "2" para Poisson (f(x)=x2-x):')
     
 npontos=input('número de pontos para discretizacao:')
 
