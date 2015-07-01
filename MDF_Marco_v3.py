@@ -127,11 +127,29 @@ def vetorpoisson(k2,L,npontos,tc1,vc1,tc2,vc2):
 
     return vetor
 
-def erroabsoluto(solnumerica,solexata,npontos):
-    erro=[0]*npontos
+def calculaerro(solnumerica,solnumanterior,npontos):
     for i in range (npontos):
-        erro[i]=solnumerica[i]-solexata[i]
-    return erro
+        erroanterior[i] = erroatual[i]
+    for i in range (npontos):
+        erroatual[i] = solnumerica[i]-solnumanterior[i]
+    solnumanterior = solnumerica
+    return erroanterior, erroatual, solnumanterior
+
+
+def avaliaerro(erroanterior,erroatual,diferroatual,npontos,iteracao,parada):
+    diferroanterior=diferroatual
+    for i in range (npontos):
+        diferroatual[i] = erroatual[i]- erroanterior[i]
+        if diferroatual[i]<0:
+            diferroatual[i] = (-1.0)*diferroatual[i]
+    if max(diferroatual)<0.05:
+        parada = 1
+    if max(diferroatual)>0.05:
+        npontos = npontos + 10
+        iteracao = iteracao + 1
+    return npontos, diferroatual, iteracao, parada
+    
+    
 
 ##############################################################################
 #Estrutura principal do programa:
@@ -160,9 +178,18 @@ vc2=input('valor de condicao de contorno da direita:')
 
 verificacc(tc1,tc2)
 
-criterio = 0
+erroatual=[0]*npontos
+erroanterior=[0]*npontos
 
-while criterio == 0:
+diferroatual=[1]*npontos
+
+solnumanterior=[0]*npontos
+
+iteracao = 1
+
+parada = 0
+
+while parada == 0:
 
     matrizcoef=MDFcoef1d(L,npontos,tc1,vc1,tc2,vc2)
 
@@ -183,7 +210,27 @@ while criterio == 0:
     #imprimeVetor(solnumerica)
     #print 'Soluçao Numerica'
 
-    criterio = 1
+    (erroanterior, erroatual, solnumanterior) = calculaerro(solnumerica,solnumanterior,npontos)
+
+    (npontos, diferroatual, iteracao, parada) = avaliaerro(erroanterior,erroatual,diferroatual,npontos,iteracao,parada)
+
+print '\n'
+print 'Vetor erro final'
+imprimeVetor(erroatual)
+print '\n'
+print 'Vetor erro anterior'
+imprimeVetor(erroanterior)
+print '\n'
+print 'Quantidade de pontos para discretizacao final:'
+print npontos
+print '\n'
+print 'Quantidade de iteracoes:'
+print iteracao
+print '\n'
+print 'Diferenca entre vetores de erro'
+imprimeVetor(diferroatual)
+print '\n'
+
 
 abscissas=numpy.linspace(0,L,npontos)
 
