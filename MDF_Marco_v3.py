@@ -142,9 +142,9 @@ def avaliaerro(erroanterior,erroatual,diferroatual,npontos,iteracao,parada):
         diferroatual[i] = erroatual[i]- erroanterior[i]
         if diferroatual[i]<0:
             diferroatual[i] = (-1.0)*diferroatual[i]
-    if max(diferroatual)<0.05:
+    if max(diferroatual)<0.00000005:
         parada = 1
-    if max(diferroatual)>0.05:
+    if max(diferroatual)>0.000000050:
         npontos = npontos + 10
         iteracao = iteracao + 1
     return npontos, diferroatual, iteracao, parada
