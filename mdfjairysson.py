@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # *-* coding: utf-8 *-*
-
+import math
 import numpy 
 from scipy import linalg
 import matplotlib.pyplot as plt
@@ -20,7 +20,26 @@ def imprimiVetor(vetor):
     print'\n'
     for i in range (len(vetor)):
         print vetor[i]
-
+#Avalia se o problema pode ser resolvido
+#Tc1 e Tc2 nao podem ser naturais simultaneamente
+def verificacc(tc1,tc2):
+    
+    if tc1 != 1 and tc1 != 0:
+        print 'Erro cc 1'
+        
+    if tc2 != 1 and tc2 != 0:
+        print 'Erro cc 2'
+        
+    if tc1 == 1 and tc2 == 1:
+        print 'Ambas as condicoes de contorno sao naturais => impossivel definir solucao'
+        
+#Avalia a entrada do numero de pontos
+#Deve ser um valor inteiro >= 2
+def verificanpts(npontos):
+    if isinstance(npontos,int)== False:
+        print 'Erro no numero de pontos (nao inteiro)'
+    if npontos < 2:
+        print 'Erro no numero de pontos (<2)'
         
 #Montar a matriz da equação da laplace
 def laplace1d(npontos,tc1,vc1,tc2,vc2):  
@@ -37,9 +56,6 @@ def laplace1d(npontos,tc1,vc1,tc2,vc2):
         matriz[0][1]= 1.0/h
     else:
         print'ERRO tipo cc inicial'
-
-        
-
 
       
     for i in range(1,npontos-1):
@@ -95,21 +111,161 @@ def montavetor(npontos,tc1,vc1,tc2,vc2,problema):
         
 
     return vetor
+#Problema de Poisson para f(x) = x² - x
+def vetorpoisson(k2,npontos,tc1,vc1,tc2,vc2):
+    vetor=[0]*npontos
+    h=1.0/(npontos-1)
+    vetor[0]=vc1
 
-def fonte(x):
+    if k2 == 1:
+        for i in range (1,npontos-1):
+            x=i*h
+            funcao=(x**2)-x
+            vetor[i]=funcao
+    if k2 == 2:
+        for i in range (1,npontos-1):
+            x=i*h
+            funcao=x
+            vetor[i]=funcao
+    if k2 == 3:
+        for i in range (1,npontos-1):
+            x=i*h
+            funcao=x*(x-1)*(x-0.5)
+            vetor[i]=funcao
+    if k2 == 4:
+        for i in range (1,npontos-1):
+            x=i*h
+            funcao=math.exp(x)
+            vetor[i]=funcao
+    if k2 == 5:
+        for i in range (1,npontos-1):
+            x=i*h
+            funcao=math.sin(x) + math.cos(x)
+            vetor[i]=funcao
+        
+    vetor[npontos-1]=vc2
 
-    fonte=x**5*(x-1)
-
-#    fonte=x*(x-1)*(x-0.5)*(x-0.25)
-
-    return fonte
+    return vetor
 
 
-problema=input('digite 0 para laplace e 1 para poisson:')
 
-#if problema!=0 and problema!=1:
-#    'problema não definido'
-#    break
+#Montar o vetor resposta U(x) para os pontos x desejados
+#Poisson solucionado via analitica para f(x) = x² - x
+def exatapoisson1d(k2,npontos,tc1,vc1,tc2,vc2):  
+    h=1.0/(npontos-1)
+    exata=[0]*npontos
+       
+    if tc1==0 and tc2==0:
+        if k2==1:
+            for i in range (npontos):
+                x=i*h
+                u=(((x**4)/12.0)-((x**3)/6.0))+((1.0/12.0)+vc2-vc1)*x + vc1
+                exata[i]=u
+        if k2==2:
+            for i in range (npontos):
+                x=i*h
+                u=((x**3)/6.0)-((1.0/6.0) + vc1 - vc2)*x + vc1
+                exata[i]=u
+        if k2==3:
+            for i in range (npontos):
+                x=i*h
+                u=(((x**5)/20)-((x**4)/8)+((x**3)/12)) -(vc1-vc2+(1.0/120.0))*x + vc1
+                exata[i]=u
+        if k2==4:
+            for i in range (npontos):
+                x=i*h
+                u=(math.exp(x)) - (math.e - 1 + vc1 - vc2)*x - 1+vc1
+                exata[i]=u
+        if k2==5:
+            for i in range (npontos):
+                x=i*h
+                u=-(math.sin(x)+math.cos(x)) - (1+vc1-vc2-math.sin(1)-math.cos(1))*x +1+vc1
+                exata[i]=u
+        if k2==6:
+            print "Nao foi calculado"
+                
+    if tc1==0 and tc2==1:
+        if k2==1:
+            for i in range (npontos):
+                x=i*h
+                u=(((x**4)/12.0)-((x**3)/6.0))+(vc2 + (1/6.0))*x + vc1
+                exata[i]=u
+        if k2==2:
+            for i in range (npontos):
+                x=i*h
+                u=((x**3)/6.0)-(0.5-vc2)*x + vc1
+                exata[i]=u
+        if k2==3:
+            for i in range (npontos):
+                x=i*h
+                u=(((x**5)/20)-((x**4)/8)+((x**3)/12)) -((1.0/120.0)-vc2)*x + vc1
+                exata[i]=u
+        if k2==4:
+            for i in range (npontos):
+                x=i*h
+                u=(math.exp(x)) - (math.e-vc2)*x - 1+vc1
+                exata[i]=u
+        if k2==5:
+            for i in range (npontos):
+                x=i*h
+                u=-(math.sin(x)+math.cos(x)) - (math.sin(1)-math.cos(1)-vc2)*x +1+vc1
+                exata[i]=u
+        if k2==6:
+            print "Nao foi calculado"       
+
+    if tc1==1 and tc2==0:
+        if k2==1:
+            for i in range (npontos):
+                x=i*h
+                u=(((x**4)/12.0)-((x**3)/6.0))+(vc1)*x + ((1/12.0)+vc2-vc1)
+                exata[i]=u
+        if k2==2:
+            for i in range (npontos):
+                x=i*h
+                u=((x**3)/6.0)+(vc1)*x -((1.0/6.0) + vc1 - vc2)
+                exata[i]=u
+        if k2==3:
+            for i in range (npontos):
+                x=i*h
+                u=(((x**5)/20)-((x**4)/8)+((x**3)/12)) + (vc1)*x - (vc1-vc2+(1.0/120.0))
+                exata[i]=u
+        if k2==4:
+            for i in range (npontos):
+                x=i*h
+                u=(math.exp(x)) - (1-vc1)*x - (math.e - 1 + vc1 - vc2)
+                exata[i]=u
+        if k2==5:
+            for i in range (npontos):
+                x=i*h
+                u=-(math.sin(x)+math.cos(x)) - (1+vc1)*x - (1+vc1-vc2-math.sin(1)-math.cos(1))
+                exata[i]=u
+        if k2==6:
+            x=i*h
+            u=((3*x**10)/90)+((4*x**8)/56)+((45*x**2)/2)+vc1+vc2-((3*x**10)/90)-((4*x**8)/56)-((45*x**2)/2)-vc1x
+            exalta[i]=u
+            
+    return exata
+
+def erroabsoluto(solnumerica,solexata,npontos):
+    erro=[0]*npontos
+    for i in range (npontos):
+        erro[i]=solnumerica[i]-solexata[i]
+    return erro
+
+
+##############################################################################
+#Programa principal 
+##############################################################################
+problema=input('digite 1 para laplace e 2 para poisson:')
+if problema==2:
+    k2=input('Escolha uma das funçoes da lista, digitando seu respectivo numero:\n'
+             '(1) => f(x) = x(x-1)\n'
+             '(2) => f(x) = x\n'
+             '(3) => f(x) = x(x-1)(x-0,5)\n'
+             '(4) => f(x) = e**x\n'
+             '(5) => f(x) = senx + cosx\n')
+             '(6) => f(x) = ((3x**8)+(4x**6)+45')
+    
 
 npontos=input('número de pontos para discretizacao:')
 
@@ -127,8 +283,13 @@ vc2=input('valor de condicao de contorno da direita:')
 matriz=laplace1d(npontos,tc1,vc1,tc2,vc2)
 
 imprimiMatriz(matriz)
+print 'Matriz de Coeficientes MDF'
 
-vetor=montavetor(npontos,tc1,vc1,tc2,vc2,problema)
+if problema==1:
+    vetor=vetorlaplace(npontos,tc1,vc1,tc2,vc2)
+
+elif problema==2:
+    vetor=vetorpoisson(k2,npontos,tc1,vc1,tc2,vc2)
 
 imprimiVetor(vetor)
 
@@ -140,7 +301,11 @@ x=numpy.linspace(0,1,npontos)
 
 imprimiVetor(x)
 
-exata=exatalaplace1d(npontos,tc1,vc1,tc2,vc2)
+
+if problema==1:
+   exata=exatalaplace1d(npontos,tc1,vc1,tc2,vc2)
+elif problema==2:
+    exata=exatapoisson1d(k2,npontos,tc1,vc1,tc2,vc2)
 
 imprimiVetor(exata)
 
