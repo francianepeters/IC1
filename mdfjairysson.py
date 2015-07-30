@@ -142,8 +142,11 @@ def vetorpoisson(k2,npontos,tc1,vc1,tc2,vc2):
             x=i*h
             funcao=math.sin(x) + math.cos(x)
             vetor[i]=funcao
-        
-    vetor[npontos-1]=vc2
+    if k2 == 6:
+        for i in range (1,npontos-1):
+            x=i*h
+            funcao=((3*x**8)-(12*x**7)+(18*x**6)-(12*x**5)+(3*x**4))
+            vetor[i]=funcao
 
     return vetor
 
@@ -240,9 +243,10 @@ def exatapoisson1d(k2,npontos,tc1,vc1,tc2,vc2):
                 u=-(math.sin(x)+math.cos(x)) - (1+vc1)*x - (1+vc1-vc2-math.sin(1)-math.cos(1))
                 exata[i]=u
         if k2==6:
-            x=i*h
-            u=((3*x**10)/90)+((4*x**8)/56)+((45*x**2)/2)+vc1+vc2-((3*x**10)/90)-((4*x**8)/56)-((45*x**2)/2)-vc1x
-            exalta[i]=u
+            for i in range(npontos):
+                x=i*h
+                u=((3*x**10)/90 +(12*x**9)/72+(18*x**8)/56-(12*x**7)/42+(3*x**6)/30+vc1*x+vc2-(3*1.0**10)/90-(12*1.0**9)/72-(18*1.0**8)/56-(12*1.0**7)/42-(3*1.0**6)/30-vc1*1.0)
+                exata[i]=u
             
     return exata
 
@@ -264,11 +268,9 @@ if problema==2:
              '(3) => f(x) = x(x-1)(x-0,5)\n'
              '(4) => f(x) = e**x\n'
              '(5) => f(x) = senx + cosx\n'
-             '(6) => f(x) = ((3x**8)+(4x**6)+45')
-    
+             '(6) => f(x) = (3*x**8)-(12*x**7)+(18*x**6)-(12*x**5)+(3*x**4)')
 
 npontos=input('número de pontos para discretizacao:')
-
 #if(npontos<=1)then
 #('número de pontos incorreto')
 
