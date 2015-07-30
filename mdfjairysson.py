@@ -115,7 +115,7 @@ def montavetor(npontos,tc1,vc1,tc2,vc2,problema):
 def vetorpoisson(k2,npontos,tc1,vc1,tc2,vc2):
     vetor=[0]*npontos
     h=1.0/(npontos-1)
-    vetor[0]=vc1
+
 
     if k2 == 1:
         for i in range (1,npontos-1):
@@ -145,8 +145,12 @@ def vetorpoisson(k2,npontos,tc1,vc1,tc2,vc2):
     if k2 == 6:
         for i in range (1,npontos-1):
             x=i*h
-            funcao=((3*x**8)-(12*x**7)+(18*x**6)-(12*x**5)+(3*x**4))
+            funcao=3*(x**4)*((x-1)**4)
             vetor[i]=funcao
+
+# Jairysson só faltou colocar o primeiro e último elementos do vetor (isso é igual no problema de laplace)
+    vetor[0]=vc1
+    vetor[npontos-1]=vc2
 
     return vetor
 
@@ -245,7 +249,7 @@ def exatapoisson1d(k2,npontos,tc1,vc1,tc2,vc2):
         if k2==6:
             for i in range(npontos):
                 x=i*h
-                u=((3*x**10)/90 +(12*x**9)/72+(18*x**8)/56-(12*x**7)/42+(3*x**6)/30+vc1*x+vc2-(3*1.0**10)/90-(12*1.0**9)/72-(18*1.0**8)/56-(12*1.0**7)/42-(3*1.0**6)/30-vc1*1.0)
+                u=((3*x**10)/90 -(12*x**9)/72+(18*x**8)/56-(12*x**7)/42+(3*x**6)/30+vc1*x+vc2-(3*1.0**10)/90+(12*1.0**9)/72-(18*1.0**8)/56+(12*1.0**7)/42-(3*1.0**6)/30-vc1*1.0)
                 exata[i]=u
             
     return exata
