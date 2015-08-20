@@ -243,13 +243,11 @@ print  'Erro atual:', erroatual
 print '\n'
 print 'Erro anterior:', erroanterior
 print '\n'
-print 'Quantidade de pontos para discretizacao final:'
-print npontos
+print 'Quantidade de pontos para discretizacao final:', npontos
 print '\n'
-print 'Quantidade de iteracoes:'
-print iteracao
+print 'Quantidade de iteracoes:', iteracao
 print '\n'
-print 'Diferenca entre vetores de erro:', diferro
+print 'Diferenca entre valores de erro:', diferro
 print '\n'
 
 
