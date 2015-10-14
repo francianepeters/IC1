@@ -50,8 +50,21 @@ def verificanpts(npontos):
 
 #Montar a matriz de coeficientes da equação de laplace
 #Via MDF
-def MDFcoef1d(L,P,Propriedades,Trechos,npontos,tc1,vc1,tc2,vc2):  
+def MDFcoef1d(L,P,Propriedades,Trechos,npontos,tc1,vc1,tc2,vc2):
+
     h=(1.0*L)/(npontos-1) #h-dimensao dos trechos particionados
+    
+    VetorProp=[0]*npontos #cria um vetor com as propriedades dos meios, de tamanho
+    for i in range (npontos): # npontos, a fim de facilitar a montagem do programa
+        VetorProp[i] = Propriedades[P-1]
+    b = 0
+    for j in range (P-1):
+        a = Trechos[j]/h    #obs: caso a discretizaçao coincida um ponto com a
+        for k in range (b,int(a)): # transiçao de comportamento, a propriedade adotada
+            VetorProp[k]=Propriedades[j] #sera a do trecho seguinte
+        b = int(a)
+
+    imprimeVetor(VetorProp)
 
     matriz=[0]*npontos #linhas da matriz->cria uma lista com (npontos) elementos
 
@@ -68,22 +81,15 @@ def MDFcoef1d(L,P,Propriedades,Trechos,npontos,tc1,vc1,tc2,vc2):
 #preenche entre a linha [0] e a linha [(npontos)-1] da matriz de coeficientes
     if P == 1:
         for i in range(1,npontos-1):
-            matriz[i][i+1]=Propriedades[0]*(1/h**2)
-            matriz[i][i-1]=Propriedades[0]*(1/h**2)
-            matriz[i][i]=Propriedades[0]*(-2/h**2)
+            matriz[i][i+1]=1/h**2
+            matriz[i][i-1]=1/h**2
+            matriz[i][i]=(-2/h**2)
 
     if P!=1:
-        i = 1
-        for j in range (P-1):
-            while h*i <= Trechos[j]:
-                matriz[i][i+1]=Propriedades[j]*(1/h**2)
-                matriz[i][i-1]=Propriedades[j]*(1/h**2)
-                matriz[i][i]=Propriedades[j]*(-2/h**2)
-                i = i+1
-        for k in range (i,npontos-1):
-            matriz[k][k+1]=Propriedades[P-1]*(1/h**2)
-            matriz[k][k-1]=Propriedades[P-1]*(1/h**2)
-            matriz[k][k]=Propriedades[P-1]*(-2/h**2)
+        for i in range (1,npontos-1):
+            matriz[i][i+1]=(VetorProp[i]*(1/h**2))+((VetorProp[i+1]-VetorProp[i-1])/(4*h**2))
+            matriz[i][i-1]=VetorProp[i]*(1/h**2)-((VetorProp[i+1]-VetorProp[i-1])/(4*h**2))
+            matriz[i][i]=VetorProp[i]*(-2/h**2)
 
 
     if tc2==0: # última linha: condição de contorno essencial do ponto final       
@@ -275,7 +281,6 @@ print 'Quantidade de refinamentos:', refinamento
 print '\n'
 print 'Diferenca entre valores de erro:', diferro
 print '\n'
-
 
 abscissas=numpy.linspace(0,L,npontos)
 
