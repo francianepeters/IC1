@@ -411,7 +411,8 @@ areaanterior = calculaarea(solnumanterior,npontos)
 print '\n'
 k3=input('Deseja avaliar o erro com base:\n'
          '(1)na solucao analitica;\n'
-         '(2)pelo metodos de refinamentos.\n')
+         '(2)pelo metodos de refinamentos.\n'
+         '(3)nao desejo avaliar erro:\n')
 
 if k3==1:
     abscissas=numpy.linspace(0,L,npontos)
@@ -438,7 +439,7 @@ if k3==2:
 
     passo = 10
 
-    erroadm = .5
+    erroadm = math.exp(18)
 
     erroatual = 0#valor atribuido apenas para definir erroatual como variavel global
 
@@ -497,3 +498,16 @@ if k3==2:
 
 
     plt.show()    #apresenta os gráficos plotados
+
+if k3==3:
+    abscissas=numpy.linspace(0,L,npontos)
+    imprimeVetor(solnumanterior)
+    print 'Soluçao Numerica'
+    plt.plot(abscissas,solnumanterior,'bo-', label='Numerica')   #gráfico soluçao numerica
+    plt.legend(loc='upper left')
+    #Identificaçao dos eixos
+    axes = plt.gca()
+    axes.set_xlabel('x')
+    axes.set_ylabel('u(x)')
+    plt.show()    #apresenta os gráficos plotados
+
